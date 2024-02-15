@@ -122,7 +122,7 @@ contract GovernorBravoProposal is Proposal {
         if (address(timelock) != executor) {
             console.log("\n  ALERT: Governor timelock is not the Kernel's executor!");
             console.log("       If there are Kernel interactions, the proposal execution will revert.\n");
-            console.log("       The simulation will prank the timelock as the Kernel executor, so that.");
+            console.log("       The simulation will prank the timelock as the Kernel executor, so that");
             console.log("       the proposal outcomes can still be simulated.");
 
             vm.prank(executor);
@@ -154,18 +154,18 @@ contract GovernorBravoProposal is Proposal {
 
         if (DEBUG) {
             console.log(
-                "\n  Schedule batch calldata with ",
+                "Schedule batch calldata with",
                 actions.length,
                 (actions.length > 1 ? "actions." : "action.")
             );
         }
 
         // Check proposal is in Pending state
-        require(governor.state(proposalId) == Bravo.ProposalState.Pending);
+        assert(governor.state(proposalId) == Bravo.ProposalState.Pending);
 
         // Roll to allow proposal activation
         vm.roll(block.number + governor.votingDelay() + 1);
-        require(governor.state(proposalId) == Bravo.ProposalState.Pending);
+        assert(governor.state(proposalId) == Bravo.ProposalState.Pending);
 
         // Activate the proposal
         vm.prank(proposerAddress);
@@ -173,7 +173,7 @@ contract GovernorBravoProposal is Proposal {
 
         // Roll to Active state (voting period)
         vm.roll(block.number + governor.votingDelay() + 1);
-        require(governor.state(proposalId) == Bravo.ProposalState.Active);
+        assert(governor.state(proposalId) == Bravo.ProposalState.Active);
 
         // Vote YES
         vm.prank(proposerAddress);
@@ -181,18 +181,18 @@ contract GovernorBravoProposal is Proposal {
 
         // Roll to allow proposal state transitions
         vm.roll(block.number + governor.votingPeriod());
-        require(governor.state(proposalId) == Bravo.ProposalState.Succeeded);
+        assert(governor.state(proposalId) == Bravo.ProposalState.Succeeded);
 
         // Queue the proposal
         governor.queue(proposalId);
-        require(governor.state(proposalId) == Bravo.ProposalState.Queued);
+        assert(governor.state(proposalId) == Bravo.ProposalState.Queued);
 
         // Warp to allow proposal execution on timelock
         vm.warp(block.timestamp + timelock.delay());
 
         // Execute the proposal
         governor.execute(proposalId);
-        require(governor.state(proposalId) == Bravo.ProposalState.Executed);
+        assert(governor.state(proposalId) == Bravo.ProposalState.Executed);
     }
 
     function _bytesMatch(
