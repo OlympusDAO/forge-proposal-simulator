@@ -71,7 +71,7 @@ contract GovernorBravoProposal is Proposal {
 
         if (DEBUG) {
             console.log(
-                "\n  Schedule batch calldata with ",
+                "Schedule batch calldata with ",
                 actions.length,
                 (actions.length > 1 ? "actions" : "action")
             );

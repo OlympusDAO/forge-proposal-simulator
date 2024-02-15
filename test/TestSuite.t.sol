@@ -77,8 +77,7 @@ contract TestSuite is Test {
         address check
     ) public returns (bool[] memory calldataMatches) {
         if (debug) {
-            console.log(
-                "\n\n------- Calldata check (simulation vs mainnet) -------");
+            console.log("\n\n------- Calldata check (simulation vs mainnet) -------");
         }
 
         calldataMatches = new bool[](proposals.length);
