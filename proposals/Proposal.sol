@@ -146,7 +146,7 @@ abstract contract Proposal is Test, Script, IProposal {
 
             if (DEBUG && !HIDE_DEBUG) {
                 console.log("%d). %s", i + 1, actions[i].description);
-                console.log("target: %s\npayload", actions[i].target);
+                console.log("target: %s\n  payload:", actions[i].target);
                 console.logBytes(actions[i].arguments);
                 console.log("\n");
             }

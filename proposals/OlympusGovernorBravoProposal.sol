@@ -5,6 +5,7 @@ import "forge-std/console.sol";
 import {Proposal} from "./Proposal.sol";
 import {Address} from "@utils/Address.sol";
 import {IVotes} from "openzeppelin/governance/utils/IVotes.sol";
+import {Kernel, Actions} from "src/Kernel.sol";
 import {GovernorBravoDelegate} from "Governors/OlympusGovernorBravo/OlympusGovernorBravo.sol";
 import {ITimelock} from "Governors/OlympusGovernorBravo/interfaces/ITimelock.sol";
 import {GovernorBravoDelegateStorageV1 as Bravo} from "Governors/OlympusGovernorBravo/abstracts/GovernorBravoStorage.sol";
@@ -108,11 +109,25 @@ contract GovernorBravoProposal is Proposal {
     /// @param governanceToken address of the governance token of the system
     /// @param proposerAddress address of the proposer
     function _simulateActions(
+        address kernelAddress,
         address governorAddress,
         address governanceToken,
         address proposerAddress
     ) internal {
         GovernorBravoDelegate governor = GovernorBravoDelegate(governorAddress);
+        ITimelock timelock = ITimelock(governor.timelock());
+        Kernel kernel = Kernel(kernelAddress);
+        address executor = kernel.executor();
+
+        if (address(timelock) != executor) {
+            console.log("\n  ALERT: Governor timelock is not the Kernel's executor!");
+            console.log("       If there are Kernel interactions, the proposal execution will revert.\n");
+            console.log("       The simulation will prank the timelock as the Kernel executor, so that.");
+            console.log("       the proposal outcomes can still be simulated.");
+
+            vm.prank(executor);
+            kernel.executeAction(Actions.ChangeExecutor, address(timelock));
+        }
 
         {
             // Ensure proposer has meets minimum proposal threshold and quorum votes to pass the proposal
@@ -173,7 +188,6 @@ contract GovernorBravoProposal is Proposal {
         require(governor.state(proposalId) == Bravo.ProposalState.Queued);
 
         // Warp to allow proposal execution on timelock
-        ITimelock timelock = ITimelock(governor.timelock());
         vm.warp(block.timestamp + timelock.delay());
 
         // Execute the proposal
