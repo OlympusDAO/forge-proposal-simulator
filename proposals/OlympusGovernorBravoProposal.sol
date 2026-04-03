@@ -5,7 +5,7 @@ import "forge-std/console.sol";
 import {Proposal} from "./Proposal.sol";
 import {Address} from "@utils/Address.sol";
 import {IVotes} from "openzeppelin/governance/utils/IVotes.sol";
-import {Kernel, Actions} from "src/Kernel.sol";
+import {Kernel, Actions} from "Governors/OlympusGovernorBravo/Kernel.sol";
 import {GovernorBravoDelegate} from "Governors/OlympusGovernorBravo/OlympusGovernorBravo.sol";
 import {ITimelock} from "Governors/OlympusGovernorBravo/interfaces/ITimelock.sol";
 import {GovernorBravoDelegateStorageV1 as Bravo} from "Governors/OlympusGovernorBravo/abstracts/GovernorBravoStorage.sol";
@@ -210,4 +210,3 @@ contract GovernorBravoProposal is Proposal {
         return true;
     }
 }
-
