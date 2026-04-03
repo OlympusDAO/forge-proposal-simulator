@@ -27,8 +27,11 @@ jobs:
               with:
                   node-version: "lts/*"
 
+            - name: "Install pnpm"
+              uses: "pnpm/action-setup@v5"
+
             - name: "Install the Node.js dependencies"
-              run: "pnpm install --frozen-lockfile
+              run: "pnpm install --frozen-lockfile"
 
             - name: "Lint the contracts"
               run: "pnpm run lint"
