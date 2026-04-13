@@ -19,19 +19,13 @@ jobs:
               with:
                   submodules: "recursive"
 
-            - name: "Install Foundry"
-              uses: "foundry-rs/foundry-toolchain@v1"
-
-            - name: "Install Node.js"
-              uses: "actions/setup-node@v3"
+            - name: "Bootstrap"
+              uses: "./.github/actions/bootstrap"
               with:
-                  node-version: "lts/*"
-
-            - name: "Install the Node.js dependencies"
-              run: "npm install"
+                  install-foundry: "true"
 
             - name: "Lint the contracts"
-              run: "npm run lint"
+              run: "pnpm run lint"
 
             - name: "Add lint summary"
               run: |
@@ -46,8 +40,10 @@ jobs:
               with:
                   submodules: "recursive"
 
-            - name: "Install Foundry"
-              uses: "foundry-rs/foundry-toolchain@v1"
+            - name: "Bootstrap"
+              uses: "./.github/actions/bootstrap"
+              with:
+                  install-foundry: "true"
 
             - name: "Build the contracts and print their size"
               run: "forge build --sizes"
@@ -66,8 +62,10 @@ jobs:
               with:
                   submodules: "recursive"
 
-            - name: "Install Foundry"
-              uses: "foundry-rs/foundry-toolchain@v1"
+            - name: "Bootstrap"
+              uses: "./.github/actions/bootstrap"
+              with:
+                  install-foundry: "true"
 
             - name: "Show the Foundry config"
               run: "forge config"
