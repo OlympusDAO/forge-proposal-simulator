@@ -1,85 +1,89 @@
-name: CI
+name: "CI"
 
 env:
-  FOUNDRY_PROFILE: ci
+    FOUNDRY_PROFILE: "ci"
 
 on:
-  workflow_dispatch:
-  pull_request:
-  push:
-    branches:
-      - main
+    workflow_dispatch:
+    pull_request:
+    push:
+        branches:
+            - "main"
 
 jobs:
-  lint:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check out the repo
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-        with:
-          submodules: recursive
+    lint:
+        runs-on: "ubuntu-latest"
+        steps:
+            - name: "Check out the repo"
+              uses: "actions/checkout@v3"
+              with:
+                  submodules: "recursive"
 
-      - name: Bootstrap
-        uses: ./.github/actions/bootstrap
-        with:
-          install-foundry: "true"
+            - name: "Install Foundry"
+              uses: "foundry-rs/foundry-toolchain@v1"
 
-      - name: Lint the contracts
-        run: pnpm run lint
+            - name: "Install Node.js"
+              uses: "actions/setup-node@v3"
+              with:
+                  node-version: "lts/*"
 
-      - name: Add lint summary
-        run: |
-          echo "## Lint result" >> $GITHUB_STEP_SUMMARY
-          echo "✅ Passed" >> $GITHUB_STEP_SUMMARY
+            - name: "Install the Node.js dependencies"
+              run: "npm install"
 
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check out the repo
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-        with:
-          submodules: recursive
+            - name: "Lint the contracts"
+              run: "npm run lint"
 
-      - name: Bootstrap
-        uses: ./.github/actions/bootstrap
-        with:
-          install-foundry: "true"
+            - name: "Add lint summary"
+              run: |
+                  echo "## Lint result" >> $GITHUB_STEP_SUMMARY
+                  echo "✅ Passed" >> $GITHUB_STEP_SUMMARY
 
-      - name: Build the contracts and print their size
-        run: forge build --sizes
+    build:
+        runs-on: "ubuntu-latest"
+        steps:
+            - name: "Check out the repo"
+              uses: "actions/checkout@v3"
+              with:
+                  submodules: "recursive"
 
-      - name: Add build summary
-        run: |
-          echo "## Build result" >> $GITHUB_STEP_SUMMARY
-          echo "✅ Passed" >> $GITHUB_STEP_SUMMARY
+            - name: "Install Foundry"
+              uses: "foundry-rs/foundry-toolchain@v1"
 
-  test:
-    needs: [lint, build]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check out the repo
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-        with:
-          submodules: recursive
+            - name: "Build the contracts and print their size"
+              run: "forge build --sizes"
 
-      - name: Bootstrap
-        uses: ./.github/actions/bootstrap
-        with:
-          install-foundry: "true"
+            - name: "Add build summary"
+              run: |
+                  echo "## Build result" >> $GITHUB_STEP_SUMMARY
+                  echo "✅ Passed" >> $GITHUB_STEP_SUMMARY
 
-      - name: Show the Foundry config
-        run: forge config
+    test:
+        needs: ["lint", "build"]
+        runs-on: "ubuntu-latest"
+        steps:
+            - name: "Check out the repo"
+              uses: "actions/checkout@v3"
+              with:
+                  submodules: "recursive"
 
-      - name: Generate a fuzz seed that changes weekly to avoid burning through RPC allowance
-        run: |
-          echo "FOUNDRY_FUZZ_SEED=$((
-            EPOCHSECONDS - EPOCHSECONDS % 604800
-          ))" >> "$GITHUB_ENV"
+            - name: "Install Foundry"
+              uses: "foundry-rs/foundry-toolchain@v1"
 
-      - name: Run the tests
-        run: forge test
+            - name: "Show the Foundry config"
+              run: "forge config"
 
-      - name: Add test summary
-        run: |
-          echo "## Tests result" >> $GITHUB_STEP_SUMMARY
-          echo "✅ Passed" >> $GITHUB_STEP_SUMMARY
+            - name:
+                  "Generate a fuzz seed that changes weekly to avoid burning through RPC
+                  allowance"
+              run: >
+                  echo "FOUNDRY_FUZZ_SEED=$(
+                    echo $(($EPOCHSECONDS - $EPOCHSECONDS % 604800))
+                  )" >> $GITHUB_ENV
+
+            - name: "Run the tests"
+              run: "forge test"
+
+            - name: "Add test summary"
+              run: |
+                  echo "## Tests result" >> $GITHUB_STEP_SUMMARY
+                  echo "✅ Passed" >> $GITHUB_STEP_SUMMARY
