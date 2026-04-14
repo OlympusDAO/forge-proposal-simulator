@@ -4,3 +4,8 @@ test = 'test'
 src = 'proposals/'
 fs_permissions = [{ access = "read", path = "./"}]
 evm_version = 'paris'
+
+[profile.ci]
+via_ir = true
+optimizer = true
+optimizer_runs = 200
