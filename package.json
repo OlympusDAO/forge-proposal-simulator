@@ -27,10 +27,9 @@
         "test:coverage:report": "forge coverage --report lcov && genhtml lcov.info --branch-coverage --output-dir coverage",
         "preinstall": "npx only-allow@1.2.2 pnpm"
     },
-    "packageManager": "pnpm@10.33.0",
     "engines": {
         "node": ">=24",
-        "pnpm": "10.33.0",
+        "pnpm": ">=10.33.0",
         "npm": "use-pnpm",
         "yarn": "use-pnpm"
     },
