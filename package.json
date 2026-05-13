@@ -18,7 +18,7 @@
   ],
   "scripts": {
     "clean": "rm -rf cache out",
-    "build": "forge build",
+    "build": "forge build --profile ci",
     "lint": "solhint --config ./.solhintrc {addresses,proposals,utils,test,examples}/**/*.sol",
     "prettier": "prettier \"**/*\" --ignore-path .prettierignore --list-different",
     "prettier:write": "prettier \"**/*\" --ignore-path .prettierignore -w",
@@ -35,19 +35,11 @@
   },
   "pnpm": {
     "overrides": {
-      "brace-expansion": ">=2.0.3",
-      "js-yaml": ">=4.1.1",
-      "lodash": ">=4.18.0",
-      "minimatch": ">=5.1.8",
-      "brace-expansion@>=2.0.0 <2.0.3": ">=2.0.3",
-      "brace-expansion@>=2.0.0 <=2.0.1": ">=2.0.2",
-      "js-yaml@>=4.0.0 <4.1.1": ">=4.1.1",
-      "lodash@<=4.17.23": ">=4.18.0",
-      "lodash@>=4.0.0 <=4.17.22": ">=4.17.23",
-      "lodash@>=4.0.0 <=4.17.23": ">=4.18.0",
-      "minimatch@>=5.0.0 <5.1.7": ">=5.1.7",
-      "minimatch@>=5.0.0 <5.1.8": ">=5.1.8",
-      "fast-uri": ">=3.1.2"
+      "brace-expansion": "^2.0.3",
+      "fast-uri": "^3.1.2",
+      "js-yaml": "^4.1.1",
+      "lodash": "^4.18.0",
+      "minimatch": "^5.1.8"
     }
   }
 }
