@@ -4,6 +4,7 @@ cache
 coverage
 lib
 node_modules
+.pnpm-store
 out
 .github
 .husky
