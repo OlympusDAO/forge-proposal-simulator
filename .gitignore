@@ -8,6 +8,8 @@ out/
 
 node_modules/
 
+.pnpm-store/
+
 .env
 
 lcov.info
