@@ -133,7 +133,7 @@ abstract contract TimelockProposal is Proposal {
         }
 
         uint256 delay = timelock.getMinDelay();
-        vm.warp(block.timestamp + delay);
+        vm.warp(vm.getBlockTimestamp() + delay);
 
         if (!timelock.isOperationDone(proposalId)) {
             vm.prank(executorAddress);

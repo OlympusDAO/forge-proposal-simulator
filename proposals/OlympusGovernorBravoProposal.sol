@@ -139,7 +139,7 @@ contract GovernorBravoProposal is Proposal {
             // Delegate proposer's votes to itself
             vm.prank(proposerAddress);
             IVotes(governanceToken).delegate(proposerAddress);
-            vm.roll(block.number + 1);
+            vm.roll(vm.getBlockNumber() + 1);
         }
 
         bytes memory proposeData = getCalldata();
@@ -163,7 +163,7 @@ contract GovernorBravoProposal is Proposal {
         assert(governor.state(proposalId) == IGovernorBravoDelegate.ProposalState.Pending);
 
         // Roll to allow proposal activation
-        vm.roll(block.number + governor.votingDelay() + 1);
+        vm.roll(vm.getBlockNumber() + governor.votingDelay() + 1);
         assert(governor.state(proposalId) == IGovernorBravoDelegate.ProposalState.Pending);
 
         // Activate the proposal
@@ -171,7 +171,7 @@ contract GovernorBravoProposal is Proposal {
         governor.activate(proposalId);
 
         // Roll to Active state (voting period)
-        vm.roll(block.number + governor.votingDelay() + 1);
+        vm.roll(vm.getBlockNumber() + governor.votingDelay() + 1);
         assert(governor.state(proposalId) == IGovernorBravoDelegate.ProposalState.Active);
 
         // Vote YES
@@ -179,7 +179,7 @@ contract GovernorBravoProposal is Proposal {
         governor.castVote(proposalId, 1);
 
         // Roll to allow proposal state transitions
-        vm.roll(block.number + governor.votingPeriod());
+        vm.roll(vm.getBlockNumber() + governor.votingPeriod());
         assert(governor.state(proposalId) == IGovernorBravoDelegate.ProposalState.Succeeded);
 
         // Queue the proposal
@@ -187,7 +187,7 @@ contract GovernorBravoProposal is Proposal {
         assert(governor.state(proposalId) == IGovernorBravoDelegate.ProposalState.Queued);
 
         // Warp to allow proposal execution on timelock
-        vm.warp(block.timestamp + timelock.delay());
+        vm.warp(vm.getBlockTimestamp() + timelock.delay());
 
         // Execute the proposal
         governor.execute(proposalId);
