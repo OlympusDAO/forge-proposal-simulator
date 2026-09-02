@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.4;
 
 import "forge-std/console.sol";
 import {Proposal} from "./Proposal.sol";
 import {Address} from "@utils/Address.sol";
 import {IVotes} from "openzeppelin/governance/utils/IVotes.sol";
-import {IKernel, Actions} from "Governors/OlympusGovernorBravo/interfaces/IKernel.sol";
-import {IGovernorBravoDelegate} from "Governors/OlympusGovernorBravo/interfaces/IGovernorBravoDelegate.sol";
-import {ITimelock} from "Governors/OlympusGovernorBravo/interfaces/ITimelock.sol";
+import {IGovernorBravoDelegate} from "../interfaces/IGovernorBravoDelegate.sol";
+import {IKernel, Actions} from "../interfaces/IKernel.sol";
+import {ITimelock} from "../interfaces/ITimelock.sol";
 
 contract GovernorBravoProposal is Proposal {
     using Address for address;
