@@ -5,10 +5,9 @@ import "forge-std/console.sol";
 import {Proposal} from "./Proposal.sol";
 import {Address} from "@utils/Address.sol";
 import {IVotes} from "openzeppelin/governance/utils/IVotes.sol";
-import {Kernel, Actions} from "Governors/OlympusGovernorBravo/Kernel.sol";
-import {GovernorBravoDelegate} from "Governors/OlympusGovernorBravo/OlympusGovernorBravo.sol";
+import {IKernel, Actions} from "Governors/OlympusGovernorBravo/interfaces/IKernel.sol";
+import {IGovernorBravoDelegate} from "Governors/OlympusGovernorBravo/interfaces/IGovernorBravoDelegate.sol";
 import {ITimelock} from "Governors/OlympusGovernorBravo/interfaces/ITimelock.sol";
-import {GovernorBravoDelegateStorageV1 as Bravo} from "Governors/OlympusGovernorBravo/abstracts/GovernorBravoStorage.sol";
 
 contract GovernorBravoProposal is Proposal {
     using Address for address;
@@ -46,7 +45,7 @@ contract GovernorBravoProposal is Proposal {
             uint256[] memory values,
             string[] memory signatures,
             bytes[] memory calldatas
-        ) = GovernorBravoDelegate(governor).getActions(id());
+        ) = IGovernorBravoDelegate(governor).getActions(id());
 
         data = abi.encodeWithSignature(
             "propose(address[],uint256[],string[],bytes[],string)",
@@ -114,9 +113,9 @@ contract GovernorBravoProposal is Proposal {
         address governanceToken,
         address proposerAddress
     ) internal {
-        GovernorBravoDelegate governor = GovernorBravoDelegate(governorAddress);
+        IGovernorBravoDelegate governor = IGovernorBravoDelegate(governorAddress);
         ITimelock timelock = ITimelock(governor.timelock());
-        Kernel kernel = Kernel(kernelAddress);
+        IKernel kernel = IKernel(kernelAddress);
         address executor = kernel.executor();
 
         if (address(timelock) != executor) {
@@ -161,11 +160,11 @@ contract GovernorBravoProposal is Proposal {
         }
 
         // Check proposal is in Pending state
-        assert(governor.state(proposalId) == Bravo.ProposalState.Pending);
+        assert(governor.state(proposalId) == IGovernorBravoDelegate.ProposalState.Pending);
 
         // Roll to allow proposal activation
         vm.roll(block.number + governor.votingDelay() + 1);
-        assert(governor.state(proposalId) == Bravo.ProposalState.Pending);
+        assert(governor.state(proposalId) == IGovernorBravoDelegate.ProposalState.Pending);
 
         // Activate the proposal
         vm.prank(proposerAddress);
@@ -173,7 +172,7 @@ contract GovernorBravoProposal is Proposal {
 
         // Roll to Active state (voting period)
         vm.roll(block.number + governor.votingDelay() + 1);
-        assert(governor.state(proposalId) == Bravo.ProposalState.Active);
+        assert(governor.state(proposalId) == IGovernorBravoDelegate.ProposalState.Active);
 
         // Vote YES
         vm.prank(proposerAddress);
@@ -181,18 +180,18 @@ contract GovernorBravoProposal is Proposal {
 
         // Roll to allow proposal state transitions
         vm.roll(block.number + governor.votingPeriod());
-        assert(governor.state(proposalId) == Bravo.ProposalState.Succeeded);
+        assert(governor.state(proposalId) == IGovernorBravoDelegate.ProposalState.Succeeded);
 
         // Queue the proposal
         governor.queue(proposalId);
-        assert(governor.state(proposalId) == Bravo.ProposalState.Queued);
+        assert(governor.state(proposalId) == IGovernorBravoDelegate.ProposalState.Queued);
 
         // Warp to allow proposal execution on timelock
         vm.warp(block.timestamp + timelock.delay());
 
         // Execute the proposal
         governor.execute(proposalId);
-        assert(governor.state(proposalId) == Bravo.ProposalState.Executed);
+        assert(governor.state(proposalId) == IGovernorBravoDelegate.ProposalState.Executed);
     }
 
     function _bytesMatch(
